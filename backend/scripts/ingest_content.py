@@ -10,11 +10,12 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from app.config import settings  # noqa: E402
-from langchain_community.document_loaders import PyPDFLoader  # noqa: E402
-from langchain_community.vectorstores import Chroma  # noqa: E402
-from langchain_google_genai import GoogleGenerativeAIEmbeddings  # noqa: E402
-from langchain_text_splitters import RecursiveCharacterTextSplitter  # noqa: E402
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import Chroma
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from app.config import settings
 
 
 def ingest(pdf_dir: str):
@@ -35,7 +36,7 @@ def ingest(pdf_dir: str):
         print(f"    Loading: {os.path.basename(path)}")
         try:
             docs.extend(PyPDFLoader(path).load())
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             print(f"    [!] Skipped (error): {e}")
 
     if not docs:

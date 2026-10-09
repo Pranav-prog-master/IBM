@@ -17,5 +17,5 @@ async def translate_text(text: str, source_lang: str, target_lang: str) -> str:
         if settings.translation_provider == "mymemory":
             return MyMemoryTranslator(source=source_lang, target=target_lang).translate(text)
         return GoogleTranslator(source=source_lang, target=target_lang).translate(text)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return text

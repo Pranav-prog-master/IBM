@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 def student_doc(username: str, hashed_password: str, grade: str, language: str = "en") -> dict:
@@ -7,7 +7,7 @@ def student_doc(username: str, hashed_password: str, grade: str, language: str =
         "hashed_password": hashed_password,
         "grade": grade,
         "language": language,
-        "created_at": datetime.now(timezone.utc),
+        "created_at": datetime.now(UTC),
     }
 
 
@@ -17,7 +17,7 @@ def mastery_doc(student_id: str, topic: str, subject: str, mastery_score: float 
         "topic": topic,
         "subject": subject,
         "mastery_score": mastery_score,
-        "updated_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(UTC),
     }
 
 
@@ -34,7 +34,7 @@ def quiz_attempt_doc(
         "correct_answer": correct_answer,
         "is_correct": is_correct,
         "difficulty": difficulty,
-        "attempted_at": datetime.now(timezone.utc),
+        "attempted_at": datetime.now(UTC),
     }
 
 
@@ -42,5 +42,5 @@ def teacher_doc(username: str, hashed_password: str) -> dict:
     return {
         "username": username,
         "hashed_password": hashed_password,
-        "created_at": datetime.now(timezone.utc),
+        "created_at": datetime.now(UTC),
     }

@@ -48,8 +48,8 @@ async def ask_tutor(
         answer_text = ask_gemini(clean_question, topic, mastery_level)
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
-    except Exception:  # noqa: BLE001
-        raise HTTPException(status_code=503, detail="AI service unavailable. Please try again shortly.")
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="AI service unavailable. Please try again shortly.") from exc
 
     response = {"question": question, "answer": answer_text, "mastery_level": mastery_level}
 

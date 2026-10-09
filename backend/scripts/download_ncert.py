@@ -33,7 +33,7 @@ def download(filename: str, url: str):
         with urllib.request.urlopen(req, timeout=30) as r, open(dest, "wb") as f:
             f.write(r.read())
         print("OK")
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         print(f"FAILED ({e})")
         print(f"    Manual download: {url}")
 

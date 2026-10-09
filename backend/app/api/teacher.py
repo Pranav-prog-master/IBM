@@ -23,7 +23,8 @@ def teacher_login(form: OAuth2PasswordRequestForm = Depends()):
     teacher = db.teachers.find_one({"username": form.username})
     if not teacher or not verify_password(form.password, teacher["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"access_token": create_access_token({"sub": teacher["username"], "role": "teacher"}), "token_type": "bearer"}
+    token = create_access_token({"sub": teacher["username"], "role": "teacher"})
+    return {"access_token": token, "token_type": "bearer"}
 
 
 @router.get("/dashboard/weak-topics")
@@ -63,6 +64,12 @@ def student_report(student_id: str):
     records = list(db.mastery_records.find({"student_id": student_id}))
     recent = list(db.quiz_attempts.find({"student_id": student_id}).sort("attempted_at", -1).limit(20))
     return {
-        "mastery": [{"topic": r["topic"], "subject": r["subject"], "score": round(r["mastery_score"], 3)} for r in records],
-        "recent_attempts": [{"topic": a["topic"], "correct": a["is_correct"], "at": a["attempted_at"].isoformat()} for a in recent],
+        "mastery": [
+            {"topic": r["topic"], "subject": r["subject"], "score": round(r["mastery_score"], 3)}
+            for r in records
+        ],
+        "recent_attempts": [
+            {"topic": a["topic"], "correct": a["is_correct"], "at": a["attempted_at"].isoformat()}
+            for a in recent
+        ],
     }

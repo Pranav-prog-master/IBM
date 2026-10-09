@@ -1,0 +1,10 @@
+target-version = "py311"
+line-length = 120
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "RUF"]
+ignore = [
+    "B008",   # FastAPI Depends/Form/File in function defaults is intentional
+    "BLE001", # broad Exception catches are intentional for resilience
+    "RUF001", # EN DASH in string literals is intentional
+]

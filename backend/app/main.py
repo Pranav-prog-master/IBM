@@ -16,7 +16,7 @@ async def lifespan(app: FastAPI):
     try:
         create_indexes()
         logger.info("MongoDB indexes created / verified.")
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.error(f"MongoDB startup error: {exc}")
     yield
 
@@ -68,9 +68,9 @@ def health():
 @app.get("/health/db")
 def health_db():
     """Verify MongoDB connectivity and return collection stats."""
-    from pymongo.errors import ServerSelectionTimeoutError  # noqa: PLC0415
+    from pymongo.errors import ServerSelectionTimeoutError
 
-    from app.db.session import get_db  # noqa: PLC0415
+    from app.db.session import get_db
 
     try:
         db = get_db()
@@ -86,6 +86,6 @@ def health_db():
             },
         }
     except ServerSelectionTimeoutError as exc:
-        from fastapi import HTTPException  # noqa: PLC0415
+        from fastapi import HTTPException
 
         raise HTTPException(status_code=503, detail=f"MongoDB unreachable: {exc}") from exc

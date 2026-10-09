@@ -11,7 +11,7 @@ from app.config import settings
 
 logger = logging.getLogger("uvicorn.error")
 
-TUTOR_SYSTEM = """You are a friendly, patient tutor for school students in grades 6–10.
+TUTOR_SYSTEM = """You are a friendly, patient tutor for school students in grades 6-10.
 Rules:
 - Answer ONLY using the curriculum context provided.
 - If the answer is not in the context, say: "That's a great question! Let's explore it in our next lesson."
@@ -37,8 +37,7 @@ def _is_valid_key(key: str) -> bool:
         return False
     if "." in key or "-" in key[6:]:
         return False
-    key_lower = key.lower()
-    return not any(f.lower() in key_lower for f in _INVALID_KEY_FRAGMENTS)
+    return not any(f.lower() in key.lower() for f in _INVALID_KEY_FRAGMENTS)
 
 
 def _get_client() -> genai.Client:
@@ -48,8 +47,8 @@ def _get_client() -> genai.Client:
 def _get_chroma():
     """Lazy-load ChromaDB with langchain-google-genai embeddings. Returns None on any failure."""
     try:
-        from langchain_community.vectorstores import Chroma  # noqa: PLC0415
-        from langchain_google_genai import GoogleGenerativeAIEmbeddings  # noqa: PLC0415
+        from langchain_community.vectorstores import Chroma
+        from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
         embeddings = GoogleGenerativeAIEmbeddings(
             model=settings.langchain_embedding_model,
@@ -62,8 +61,8 @@ def _get_chroma():
         if vectorstore._collection.count() == 0:
             return None
         return vectorstore
-    except Exception as exc:  # noqa: BLE001
-        logger.warning(f"ChromaDB not available: {exc}")
+    except Exception:
+        logger.warning("ChromaDB not available")
         return None
 
 
@@ -71,7 +70,7 @@ def ask_gemini(question: str, topic: str, mastery_level: str) -> str:
     if not _is_valid_key(settings.google_api_key):
         return (
             "The AI tutor is not configured yet. "
-            "Please set a valid GOOGLE_API_KEY in backend/.env — "
+            "Please set a valid GOOGLE_API_KEY in backend/.env - "
             "get a free key at https://aistudio.google.com/app/apikey"
         )
 
@@ -83,7 +82,7 @@ def ask_gemini(question: str, topic: str, mastery_level: str) -> str:
         if vectorstore:
             docs = vectorstore.similarity_search(question, k=4)
             context = "\n\n".join(d.page_content for d in docs)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.warning(f"RAG retrieval failed, using fallback: {exc}")
 
     if not context:
@@ -106,7 +105,7 @@ def ask_gemini(question: str, topic: str, mastery_level: str) -> str:
             ),
         )
         return response.text
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.error(f"Gemini API error: {exc}")
         msg = str(exc)
         if "API_KEY_INVALID" in msg or "API key not valid" in msg:
@@ -117,6 +116,6 @@ def ask_gemini(question: str, topic: str, mastery_level: str) -> str:
         if "404" in msg or "not found" in msg.lower():
             return (
                 f"Model '{settings.llm_model}' not found. "
-                "Update LLM_MODEL in backend/.env — try 'gemini-1.5-flash' or 'gemini-2.0-flash'."
+                "Update LLM_MODEL in backend/.env - try 'gemini-1.5-flash' or 'gemini-2.0-flash'."
             )
         return f"AI service error: {msg}"
