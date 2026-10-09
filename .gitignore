@@ -57,9 +57,8 @@ backend/Dockerfile
 0.1.0
 
 # ── CI / GitHub Actions ──────────────────────────────────────────────────────
-.github/
-.github/workflows/
-.github/workflows/ci.yml
+# NOTE: .github/ must NOT be ignored — GitHub Actions needs ci.yml to run
+# .github/
 
 # ── Testing / Coverage ────────────────────────────────────────────────────────
 .pytest_cache/
