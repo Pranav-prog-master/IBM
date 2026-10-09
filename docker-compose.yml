@@ -1,0 +1,49 @@
+services:
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./backend
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+      - MONGODB_DB=tutordb
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gemini-1.5-flash}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-gemini-embedding-001}
+      - SECRET_KEY=${SECRET_KEY}
+      - CHROMA_DB_PATH=/app/data/chroma_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./data:/app/data   # shared data dir for ChromaDB and PDFs
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  redis_data:

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1F4D3A" />
+  <meta name="description" content="AI Tutor — SDG 4 Quality Education dashboard" />
+  <title>AI Tutor — Dashboard</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Nunito:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Gujarati:wght@400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ── Offline banner ── -->
+  <div id="offline-banner" class="offline-banner hidden" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+    <span data-i18n="offline_banner">Saved offline — will sync when connected</span>
+  </div>
+
+  <!-- ── Toast container ── -->
+  <div id="toast-wrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ── App shell ── -->
+  <div class="dash-shell">
+
+    <!-- Floating side dock (desktop) -->
+    <nav class="float-dock" aria-label="Main navigation">
+      <div class="dock-logo" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <button class="dock-item active" data-page="dashboard" aria-current="page" aria-label="Dashboard">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span data-i18n="nav_home">Home</span>
+      </button>
+      <button class="dock-item" data-page="tasks" aria-label="Tasks">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span data-i18n="nav_tasks">Tasks</span>
+      </button>
+      <button class="dock-item" data-page="progress" aria-label="Progress">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span data-i18n="nav_progress">Progress</span>
+      </button>
+      <button class="dock-item" data-page="quiz" aria-label="Quiz">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <span data-i18n="nav_quiz">Quiz</span>
+      </button>
+    </nav>
+
+    <!-- ── Main content ── -->
+    <main class="dash-main" id="main-content">
+
+      <!-- Header -->
+      <header class="dash-header">
+        <div class="greeting-block">
+          <p class="greeting-sub" id="greeting-time" data-i18n="good_morning">Good morning,</p>
+          <h1 class="greeting-name">[Name]</h1>
+          <p class="greeting-tasks" id="task-count-headline">
+            <span id="task-count">[N]</span> <span data-i18n="tasks_today">tasks today</span>
+          </p>
+        </div>
+        <div class="header-controls">
+          <!-- Language switcher -->
+          <div class="lang-switcher" role="group" aria-label="Language">
+            <button class="lang-btn active" data-lang="en" aria-pressed="true" aria-label="English">EN</button>
+            <button class="lang-btn" data-lang="hi" aria-pressed="false" aria-label="Hindi">हि</button>
+            <button class="lang-btn" data-lang="gu" aria-pressed="false" aria-label="Gujarati">ગુ</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- 12-col grid -->
+      <div class="grid-12">
+
+        <!-- ── Today's Tasks (col-8) ── -->
+        <section class="col-8 tasks-section" aria-labelledby="tasks-heading">
+          <div class="section-header">
+            <h2 class="section-title" id="tasks-heading" data-i18n="todays_tasks">Today's Tasks</h2>
+            <!-- Filter tabs -->
+            <div class="filter-tabs" role="tablist" aria-label="Filter tasks">
+              <button class="filter-tab active" role="tab" aria-selected="true" data-filter="all" data-i18n="filter_all">All</button>
+              <button class="filter-tab" role="tab" aria-selected="false" data-filter="todo" data-i18n="filter_todo">To do</button>
+              <button class="filter-tab" role="tab" aria-selected="false" data-filter="done" data-i18n="filter_done">Done</button>
+            </div>
+          </div>
+
+          <!-- Skeleton (shown while loading) -->
+          <div id="task-skeleton" class="task-list" aria-busy="true" aria-label="Loading tasks">
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+          </div>
+
+          <!-- Task list -->
+          <ul id="task-list" class="task-list hidden" role="list" aria-label="Task list"></ul>
+
+          <!-- Empty state -->
+          <div id="empty-state" class="empty-state hidden">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <p class="empty-title" data-i18n="no_tasks_title">All clear!</p>
+            <p data-i18n="no_tasks_body">No tasks for today. Add one below.</p>
+          </div>
+
+          <!-- Add task form -->
+          <details class="add-task-details neu-card" id="add-task-details">
+            <summary class="add-task-summary" aria-label="Add a new task">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span data-i18n="add_task">Add task</span>
+            </summary>
+            <form id="add-task-form" class="add-task-form" novalidate>
+              <div class="form-row">
+                <label for="task-title-input" data-i18n="task_title">Title</label>
+                <input id="task-title-input" type="text" class="neu-input" placeholder="e.g. Fractions — Part 2" required autocomplete="off" />
+              </div>
+              <div class="form-row">
+                <label for="task-subject-input" data-i18n="task_subject">Subject</label>
+                <select id="task-subject-input" class="neu-input">
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Science">Science</option>
+                  <option value="Social Studies">Social Studies</option>
+                  <option value="English">English</option>
+                </select>
+              </div>
+              <div class="form-row-2">
+                <div class="form-row">
+                  <label for="task-type-input" data-i18n="task_type">Type</label>
+                  <select id="task-type-input" class="neu-input">
+                    <option value="Lesson">Lesson</option>
+                    <option value="Quiz">Quiz</option>
+                    <option value="Practice">Practice</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label for="task-due-input" data-i18n="task_due">Due time</label>
+                  <input id="task-due-input" type="time" class="neu-input" />
+                </div>
+              </div>
+              <button type="submit" class="btn-primary" data-i18n="add_task">Add task</button>
+            </form>
+          </details>
+        </section>
+
+        <!-- ── Right sidebar (col-4) ── -->
+        <aside class="col-4 sidebar">
+
+          <!-- Progress ring (canvas) -->
+          <div class="neu-card progress-card" role="region" aria-label="Today's goals progress">
+            <h2 class="card-title" data-i18n="goals_progress">Today's Goals</h2>
+            <div class="ring-wrap">
+              <canvas id="progress-ring" width="160" height="160"
+                aria-label="Progress ring: [X]% of today's goals complete"></canvas>
+              <div class="ring-label" aria-hidden="true">
+                <span class="ring-pct" id="ring-pct-text">[X]%</span>
+                <span class="ring-sub" data-i18n="complete">complete</span>
+              </div>
+            </div>
+            <p class="progress-caption">
+              <span id="done-count">0</span> / <span id="total-count">0</span>
+              <span data-i18n="tasks_done">tasks done</span>
+            </p>
+          </div>
+
+          <!-- Points -->
+          <div class="neu-card points-card">
+            <div class="points-icon" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            </div>
+            <div>
+              <p class="points-val" id="points-val">[N]</p>
+              <p class="points-sub" data-i18n="points">Points</p>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- ── Learning gap card (col-12) ── -->
+        <div class="col-12">
+          <div class="neu-card gap-card" role="region" aria-label="Learning gap">
+            <div class="gap-label-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span class="gap-label" data-i18n="needs_practice">Needs Practice</span>
+            </div>
+            <p class="gap-topic">[Topic]</p>
+            <button class="btn-practice" aria-label="Practice [Topic] now" data-i18n="practice_now">Practice Now</button>
+          </div>
+        </div>
+
+        <!-- ── Weekly streak (col-8) ── -->
+        <div class="col-8">
+          <div class="neu-card streak-card">
+            <div class="streak-header">
+              <h2 class="section-title" data-i18n="weekly_streak">Weekly Streak</h2>
+              <span class="streak-count" id="streak-count" aria-label="[N]-day streak">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                [N] <span data-i18n="days">days</span>
+              </span>
+            </div>
+            <!-- Canvas streak chart -->
+            <canvas id="streak-chart" height="80"
+              aria-label="Weekly streak chart: days completed this week"></canvas>
+            <p class="sr-only" id="streak-text-alt"></p>
+          </div>
+        </div>
+
+        <!-- ── Scratchpad (col-4) ── -->
+        <div class="col-4">
+          <div class="neu-card scratchpad-card">
+            <div class="scratchpad-header">
+              <h2 class="card-title" data-i18n="scratchpad">Scratchpad</h2>
+              <div class="scratchpad-controls">
+                <button class="icon-btn" id="undo-btn" aria-label="Undo last stroke">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                </button>
+                <button class="icon-btn" id="clear-btn" aria-label="Clear scratchpad">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                </button>
+              </div>
+            </div>
+            <canvas id="scratchpad" class="scratchpad-canvas"
+              aria-label="Scratchpad — draw or write here"></canvas>
+          </div>
+        </div>
+
+      </div><!-- /grid-12 -->
+    </main>
+  </div><!-- /dash-shell -->
+
+  <!-- ── Floating bottom nav (mobile) ── -->
+  <nav class="float-nav" aria-label="Main navigation">
+    <button class="nav-item active" data-page="dashboard" aria-current="page" aria-label="Dashboard">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span data-i18n="nav_home">Home</span>
+    </button>
+    <button class="nav-item" data-page="tasks" aria-label="Tasks">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span data-i18n="nav_tasks">Tasks</span>
+    </button>
+    <button class="nav-item" data-page="progress" aria-label="Progress">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span data-i18n="nav_progress">Progress</span>
+    </button>
+    <button class="nav-item" data-page="quiz" aria-label="Quiz">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span data-i18n="nav_quiz">Quiz</span>
+    </button>
+  </nav>
+
+  <!-- ── FAB ── -->
+  <button class="fab" id="fab-btn" aria-expanded="false" aria-controls="chat-panel" aria-label="Ask AI Tutor">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+  </button>
+
+  <!-- ── Floating chat panel ── -->
+  <div id="chat-panel" class="chat-panel hidden" role="dialog" aria-modal="false" aria-label="Ask AI Tutor">
+    <div class="chat-panel-header">
+      <span data-i18n="ask_ai">Ask AI Tutor</span>
+      <button id="chat-close" class="icon-btn" aria-label="Close chat panel">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="chat-panel-body" id="chat-body">
+      <p class="chat-hint" data-i18n="ai_panel_hint">Ask me anything about your lessons.</p>
+    </div>
+    <div class="chat-panel-input">
+      <label for="chat-input" class="sr-only" data-i18n="type_question">Type your question</label>
+      <input id="chat-input" class="neu-input" type="text" placeholder="Type your question…" autocomplete="off" />
+      <button id="chat-send" class="chat-send" aria-label="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+*.so
+.Python
+
+# ── Environment / Secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# ── Data & Vector Store ───────────────────────────────────────────────────────
+data/raw/
+data/chroma_db/
+backend/data/chroma_db/
+*.pdf
+
+# ── Node / Frontend ───────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/dev-dist/
+frontend/.vite/
+node_modules/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+uvicorn.log
+backend/uvicorn.log
+logs/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Testing / Coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
