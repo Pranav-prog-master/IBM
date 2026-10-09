@@ -10,14 +10,10 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: pgvector/pgvector:pg16
-        env:
-          POSTGRES_USER: tutor
-          POSTGRES_PASSWORD: tutor
-          POSTGRES_DB: tutordb
-        ports: ["5432:5432"]
-        options: --health-cmd pg_isready --health-interval 5s --health-retries 5
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+        options: --health-cmd "mongosh --eval \"db.adminCommand('ping')\"" --health-interval 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
@@ -27,19 +23,17 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install -r backend/requirements.txt
-        working-directory: .
-      - name: Download spaCy model
-        run: python -m spacy download en_core_web_sm
       - name: Lint
         run: pip install ruff && ruff check backend/
       - name: Test
         env:
-          DATABASE_URL: postgresql://tutor:tutor@localhost:5432/tutordb
-          GOOGLE_API_KEY: dummy
-          SECRET_KEY: test-secret
+          MONGODB_URL: mongodb://localhost:27017
+          MONGODB_DB: tutordb_test
+          GOOGLE_API_KEY: AIzaSy_test_dummy_key_for_ci_only
+          SECRET_KEY: test-secret-key-for-ci-minimum-32-chars
         run: |
           pip install pytest httpx
-          pytest backend/ -v --ignore=backend/scripts
+          pytest backend/tests/ -v
 
   frontend:
     runs-on: ubuntu-latest
