@@ -48,7 +48,18 @@ logs/
 Thumbs.db
 
 # ── Docker ────────────────────────────────────────────────────────────────────
+docker-compose.yml
 docker-compose.override.yml
+Dockerfile
+backend/Dockerfile
+
+# ── Releases / Version artifacts ──────────────────────────────────────────────
+0.1.0
+
+# ── CI / GitHub Actions ──────────────────────────────────────────────────────
+.github/
+.github/workflows/
+.github/workflows/ci.yml
 
 # ── Testing / Coverage ────────────────────────────────────────────────────────
 .pytest_cache/
