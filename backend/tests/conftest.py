@@ -1,7 +1,8 @@
 import os
+from unittest.mock import MagicMock, patch
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import MagicMock, patch
 
 # Set env vars before importing app
 os.environ.setdefault("MONGODB_URL", "mongodb://localhost:27017")
