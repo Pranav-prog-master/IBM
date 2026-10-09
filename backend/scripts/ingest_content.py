@@ -10,17 +10,18 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from app.config import settings
+from app.config import settings  # noqa: E402
+from langchain_community.document_loaders import PyPDFLoader  # noqa: E402
+from langchain_community.vectorstores import Chroma  # noqa: E402
+from langchain_google_genai import GoogleGenerativeAIEmbeddings  # noqa: E402
+from langchain_text_splitters import RecursiveCharacterTextSplitter  # noqa: E402
 
 
 def ingest(pdf_dir: str):
-    pdf_files = glob.glob(f"{pdf_dir}/**/*.pdf", recursive=True) + glob.glob(f"{pdf_dir}/*.pdf")
-    # deduplicate
-    pdf_files = list(set(pdf_files))
+    pdf_files = list(set(
+        glob.glob(f"{pdf_dir}/**/*.pdf", recursive=True) +
+        glob.glob(f"{pdf_dir}/*.pdf")
+    ))
 
     if not pdf_files:
         print(f"[!] No PDFs found in '{pdf_dir}'")
@@ -34,7 +35,7 @@ def ingest(pdf_dir: str):
         print(f"    Loading: {os.path.basename(path)}")
         try:
             docs.extend(PyPDFLoader(path).load())
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"    [!] Skipped (error): {e}")
 
     if not docs:

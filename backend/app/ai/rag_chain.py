@@ -3,8 +3,10 @@ RAG chain using google-genai SDK for LLM, langchain-google-genai for embeddings.
 Falls back to a direct LLM answer when ChromaDB has no documents or embeddings fail.
 """
 import logging
+
 from google import genai
 from google.genai import types
+
 from app.config import settings
 
 logger = logging.getLogger("uvicorn.error")
@@ -33,7 +35,7 @@ _INVALID_KEY_FRAGMENTS = ("REPLACE", "your_real_key", "PASTE", "example", "place
 def _is_valid_key(key: str) -> bool:
     if not key or len(key) < 35:
         return False
-    if '.' in key or '-' in key[6:]:
+    if "." in key or "-" in key[6:]:
         return False
     key_lower = key.lower()
     return not any(f.lower() in key_lower for f in _INVALID_KEY_FRAGMENTS)
@@ -46,8 +48,9 @@ def _get_client() -> genai.Client:
 def _get_chroma():
     """Lazy-load ChromaDB with langchain-google-genai embeddings. Returns None on any failure."""
     try:
-        from langchain_community.vectorstores import Chroma
-        from langchain_google_genai import GoogleGenerativeAIEmbeddings
+        from langchain_community.vectorstores import Chroma  # noqa: PLC0415
+        from langchain_google_genai import GoogleGenerativeAIEmbeddings  # noqa: PLC0415
+
         embeddings = GoogleGenerativeAIEmbeddings(
             model=settings.langchain_embedding_model,
             google_api_key=settings.google_api_key,
@@ -59,7 +62,7 @@ def _get_chroma():
         if vectorstore._collection.count() == 0:
             return None
         return vectorstore
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         logger.warning(f"ChromaDB not available: {exc}")
         return None
 
@@ -80,7 +83,7 @@ def ask_gemini(question: str, topic: str, mastery_level: str) -> str:
         if vectorstore:
             docs = vectorstore.similarity_search(question, k=4)
             context = "\n\n".join(d.page_content for d in docs)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         logger.warning(f"RAG retrieval failed, using fallback: {exc}")
 
     if not context:
@@ -103,7 +106,7 @@ def ask_gemini(question: str, topic: str, mastery_level: str) -> str:
             ),
         )
         return response.text
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         logger.error(f"Gemini API error: {exc}")
         msg = str(exc)
         if "API_KEY_INVALID" in msg or "API key not valid" in msg:

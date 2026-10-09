@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
-from app.db.session import get_db
+
 from app.db.auth import get_current_student
+from app.db.session import get_db
 
 router = APIRouter(prefix="/progress", tags=["progress"])
 
@@ -25,7 +26,7 @@ def get_mastery(student: dict = Depends(get_current_student)):
 
 
 @router.get("/history")
-def get_history(topic: str = None, limit: int = 50, student: dict = Depends(get_current_student)):
+def get_history(topic: str | None = None, limit: int = 50, student: dict = Depends(get_current_student)):
     db = get_db()
     query = {"student_id": student["_id"]}
     if topic:

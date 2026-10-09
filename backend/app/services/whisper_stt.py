@@ -1,4 +1,6 @@
-import tempfile, os
+import os
+import tempfile
+
 from faster_whisper import WhisperModel
 
 _model = None

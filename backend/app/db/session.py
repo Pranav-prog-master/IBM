@@ -1,5 +1,6 @@
-from pymongo import MongoClient, ASCENDING
+from pymongo import ASCENDING, MongoClient
 from pymongo.database import Database
+
 from app.config import settings
 
 _client: MongoClient = None
@@ -8,7 +9,6 @@ _client: MongoClient = None
 def get_client() -> MongoClient:
     global _client
     if _client is None:
-        # serverSelectionTimeoutMS prevents hanging forever when Mongo is down
         _client = MongoClient(
             settings.mongodb_url,
             serverSelectionTimeoutMS=3000,

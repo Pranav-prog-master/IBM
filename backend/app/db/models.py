@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-from bson import ObjectId
 
 
 def student_doc(username: str, hashed_password: str, grade: str, language: str = "en") -> dict:
@@ -22,8 +21,10 @@ def mastery_doc(student_id: str, topic: str, subject: str, mastery_score: float 
     }
 
 
-def quiz_attempt_doc(student_id: str, topic: str, subject: str, question: str,
-                     student_answer: str, correct_answer: str, is_correct: bool, difficulty: str) -> dict:
+def quiz_attempt_doc(
+    student_id: str, topic: str, subject: str, question: str,
+    student_answer: str, correct_answer: str, is_correct: bool, difficulty: str,
+) -> dict:
     return {
         "student_id": student_id,
         "topic": topic,

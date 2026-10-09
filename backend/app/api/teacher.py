@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from app.db.session import get_db
+
+from app.db.auth import create_access_token, hash_password, verify_password
 from app.db.models import teacher_doc
-from app.db.auth import hash_password, verify_password, create_access_token
+from app.db.session import get_db
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
 
@@ -26,7 +27,7 @@ def teacher_login(form: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.get("/dashboard/weak-topics")
-def weak_topics(grade: str = None):
+def weak_topics(grade: str | None = None):
     db = get_db()
     pipeline = []
 

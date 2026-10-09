@@ -4,22 +4,15 @@ Run from the project root:
     python backend/scripts/download_ncert.py
 """
 import os
-import sys
 import urllib.request
 
 SAVE_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw")
 
-# NCERT PDF direct links (grades 6-10, Math + Science)
-# Source: https://ncert.nic.in/textbook.php
 BOOKS = [
-    # Mathematics
-    ("math_grade6.pdf",    "https://ncert.nic.in/textbook/pdf/femh1dd.zip"),
     ("math_grade7.pdf",    "https://ncert.nic.in/textbook/pdf/gemh1dd.zip"),
     ("math_grade8.pdf",    "https://ncert.nic.in/textbook/pdf/hemh1dd.zip"),
     ("math_grade9.pdf",    "https://ncert.nic.in/textbook/pdf/iemh1dd.zip"),
     ("math_grade10.pdf",   "https://ncert.nic.in/textbook/pdf/jemh1dd.zip"),
-    # Science
-    ("science_grade6.pdf", "https://ncert.nic.in/textbook/pdf/fesc1dd.zip"),
     ("science_grade7.pdf", "https://ncert.nic.in/textbook/pdf/gesc1dd.zip"),
     ("science_grade8.pdf", "https://ncert.nic.in/textbook/pdf/hesc1dd.zip"),
     ("science_grade9.pdf", "https://ncert.nic.in/textbook/pdf/iesc1dd.zip"),
@@ -40,7 +33,7 @@ def download(filename: str, url: str):
         with urllib.request.urlopen(req, timeout=30) as r, open(dest, "wb") as f:
             f.write(r.read())
         print("OK")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"FAILED ({e})")
         print(f"    Manual download: {url}")
 

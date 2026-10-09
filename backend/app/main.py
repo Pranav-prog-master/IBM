@@ -1,10 +1,12 @@
+import logging
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse, Response, JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse, Response
+
+from app.api import auth, progress, quiz, teacher, translation, tutor
 from app.db.session import create_indexes
-from app.api import auth, tutor, quiz, progress, translation, teacher
-import logging
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -14,7 +16,7 @@ async def lifespan(app: FastAPI):
     try:
         create_indexes()
         logger.info("MongoDB indexes created / verified.")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         logger.error(f"MongoDB startup error: {exc}")
     yield
 
@@ -28,7 +30,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # tighten to your domain in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,11 +46,8 @@ app.include_router(teacher.router)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": str(exc)},
-    )
+    logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}")
+    return JSONResponse(status_code=500, content={"detail": str(exc)})
 
 
 @app.get("/", include_in_schema=False)
@@ -69,26 +68,24 @@ def health():
 @app.get("/health/db")
 def health_db():
     """Verify MongoDB connectivity and return collection stats."""
-    from app.db.session import get_db
-    from pymongo.errors import ServerSelectionTimeoutError
+    from pymongo.errors import ServerSelectionTimeoutError  # noqa: PLC0415
+
+    from app.db.session import get_db  # noqa: PLC0415
+
     try:
         db = get_db()
-        # Force a real round-trip with a 2-second timeout
         db.client.server_info()
-        students   = db.students.count_documents({})
-        teachers   = db.teachers.count_documents({})
-        mastery    = db.mastery_records.count_documents({})
-        attempts   = db.quiz_attempts.count_documents({})
         return {
             "status": "ok",
             "database": db.name,
             "collections": {
-                "students":       students,
-                "teachers":       teachers,
-                "mastery_records": mastery,
-                "quiz_attempts":  attempts,
+                "students": db.students.count_documents({}),
+                "teachers": db.teachers.count_documents({}),
+                "mastery_records": db.mastery_records.count_documents({}),
+                "quiz_attempts": db.quiz_attempts.count_documents({}),
             },
         }
     except ServerSelectionTimeoutError as exc:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=503, detail=f"MongoDB unreachable: {exc}")
+        from fastapi import HTTPException  # noqa: PLC0415
+
+        raise HTTPException(status_code=503, detail=f"MongoDB unreachable: {exc}") from exc

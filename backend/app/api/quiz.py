@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from app.db.session import get_db
-from app.db.models import mastery_doc, quiz_attempt_doc
-from app.db.auth import get_current_student
+
+from app.ai.bkt import is_mastered, update_mastery
 from app.ai.quiz_chain import generate_quiz
-from app.ai.bkt import update_mastery, is_mastered
+from app.db.auth import get_current_student
+from app.db.models import mastery_doc, quiz_attempt_doc
+from app.db.session import get_db
 
 router = APIRouter(prefix="/quiz", tags=["quiz"])
 
@@ -47,8 +48,10 @@ def submit_answer(req: SubmitAnswerRequest, student: dict = Depends(get_current_
         upsert=True,
     )
     db.quiz_attempts.insert_one(
-        quiz_attempt_doc(student["_id"], req.topic, req.subject, req.question,
-                         req.student_answer, req.correct_answer, is_correct, req.difficulty)
+        quiz_attempt_doc(
+            student["_id"], req.topic, req.subject, req.question,
+            req.student_answer, req.correct_answer, is_correct, req.difficulty,
+        )
     )
 
     return {
